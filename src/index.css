@@ -1,0 +1,455 @@
+@import "tailwindcss";
+
+:root {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Warm color palette for task manager */
+  --primary-orange: #f97316;
+  --primary-amber: #f59e0b;
+  --primary-yellow: #fbbf24;
+  --accent: 249, 115, 22; /* orange-500 */
+  --accent-2: 245, 158, 11; /* amber-500 */
+  --accent-3: 251, 191, 36; /* yellow-400 */
+  --cream: 254, 249, 242; /* warm cream */
+  --bg-warm: 255, 251, 245; /* ultra light warm */
+}
+
+a {
+  font-weight: 500;
+  color: var(--primary-orange);
+  text-decoration: inherit;
+  transition: color 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+a:hover {
+  color: var(--primary-amber);
+  transform: translateY(-1px);
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgb(var(--bg-warm)) 0%, rgb(var(--cream)) 100%);
+}
+
+/* ========================================
+   APP BACKGROUND: Enhanced animated mesh gradient
+   ======================================== */
+.app-root {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(to bottom right, #fff5f0, #fef3e7, #fffbeb);
+}
+
+.app-root::before {
+  content: "";
+  position: absolute;
+  inset: -20% -20% -20% -20%;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(var(--accent), 0.15), transparent 30%),
+    radial-gradient(circle at 90% 80%, rgba(var(--accent-2), 0.12), transparent 35%),
+    radial-gradient(circle at 50% 50%, rgba(var(--accent-3), 0.08), transparent 40%),
+    linear-gradient(135deg, rgba(255, 250, 245, 0.8), rgba(255, 248, 236, 0.9));
+  filter: blur(80px) saturate(150%);
+  z-index: 0;
+  transform: scale(1.05);
+  animation: meshShift 40s ease-in-out infinite;
+  will-change: transform, filter;
+}
+
+@keyframes meshShift {
+  0% { 
+    transform: translate3d(0, 0, 0) scale(1.05) rotate(0deg);
+    filter: blur(80px) saturate(150%) hue-rotate(0deg);
+  }
+  33% {
+    transform: translate3d(-3%, 2%, 0) scale(1.08) rotate(1deg);
+    filter: blur(90px) saturate(160%) hue-rotate(5deg);
+  }
+  66% {
+    transform: translate3d(4%, -2%, 0) scale(1.06) rotate(-1deg);
+    filter: blur(85px) saturate(155%) hue-rotate(-3deg);
+  }
+  100% { 
+    transform: translate3d(0, 0, 0) scale(1.05) rotate(0deg);
+    filter: blur(80px) saturate(150%) hue-rotate(0deg);
+  }
+}
+
+/* ========================================
+   GLASSMORPHISM CARD with warm accents
+   ======================================== */
+.glass-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(249, 115, 22, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 
+    0 4px 16px rgba(249, 115, 22, 0.08),
+    0 2px 8px rgba(245, 158, 11, 0.06);
+  transition: 
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 280ms ease,
+    border-color 280ms ease,
+    background-color 280ms ease;
+  z-index: 1;
+}
+
+.glass-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 12px 40px rgba(249, 115, 22, 0.15),
+    0 6px 20px rgba(245, 158, 11, 0.12),
+    0 0 0 1px rgba(var(--accent), 0.2);
+  border-color: rgba(var(--accent), 0.3);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, 
+    rgba(249, 115, 22, 0.2), 
+    rgba(245, 158, 11, 0.1),
+    rgba(251, 191, 36, 0.15));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 280ms ease;
+}
+
+.glass-card:hover::before {
+  opacity: 1;
+}
+
+/* ========================================
+   TASK GRID with smooth entrance
+   ======================================== */
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  align-items: start;
+  z-index: 1;
+  padding: 4px;
+}
+
+@media (max-width: 640px) {
+  .task-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+/* Fade and slide up for newly added tasks */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Pulse animation for important elements */
+@keyframes pulse-warm {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(var(--accent), 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(var(--accent), 0);
+  }
+}
+
+.pulse-warm {
+  animation: pulse-warm 2s ease-in-out infinite;
+}
+
+/* Shimmer effect for loading states */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(var(--accent), 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ========================================
+   DRAWER / SIDEBAR
+   ======================================== */
+.sidebar {
+  z-index: 20;
+  transition: transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(var(--accent), 0.1);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    transform: translateX(-110%);
+    padding: 1.5rem;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  body.drawer-open .sidebar {
+    transform: translateX(0);
+  }
+  
+  /* Backdrop dimmer with warm tint */
+  body.drawer-open::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(249, 115, 22, 0.1);
+    backdrop-filter: blur(4px);
+    z-index: 15;
+    animation: fadeIn 250ms ease;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ========================================
+   CONTENT WRAPPER
+   ======================================== */
+.content-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+/* ========================================
+   TYPOGRAPHY
+   ======================================== */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-amber));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+h2, h3, h4, h5, h6 {
+  color: #78350f; /* warm brown */
+}
+
+/* ========================================
+   BUTTONS with warm styling
+   ======================================== */
+button {
+  border-radius: 12px;
+  border: 1px solid transparent;
+  padding: 0.75em 1.5em;
+  font-size: 1em;
+  font-weight: 600;
+  font-family: inherit;
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-amber));
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 12px rgba(var(--accent), 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--primary-amber), var(--primary-yellow));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(var(--accent), 0.3);
+}
+
+button:hover::before {
+  opacity: 1;
+}
+
+button span {
+  position: relative;
+  z-index: 1;
+}
+
+button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 3px solid rgba(var(--accent), 0.4);
+  outline-offset: 3px;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+button:disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(var(--accent), 0.2);
+}
+
+/* Secondary button variant */
+button.btn-secondary {
+  background: rgba(249, 115, 22, 0.1);
+  color: var(--primary-orange);
+  border: 1px solid rgba(var(--accent), 0.3);
+}
+
+button.btn-secondary:hover {
+  background: rgba(249, 115, 22, 0.2);
+  border-color: rgba(var(--accent), 0.5);
+}
+
+/* ========================================
+   FORM INPUTS with warm accents
+   ======================================== */
+input, textarea, select {
+  border: 1px solid rgba(var(--accent), 0.2);
+  border-radius: 10px;
+  padding: 0.75em 1em;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+  color: #78350f;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 3px rgba(var(--accent), 0.1);
+  background: white;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(120, 53, 15, 0.4);
+}
+
+/* ========================================
+   SCROLLBAR styling
+   ======================================== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(254, 243, 199, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary-orange), var(--primary-amber));
+  border-radius: 5px;
+  border: 2px solid rgba(254, 243, 199, 0.3);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--primary-amber), var(--primary-yellow));
+}
+
+/* ========================================
+   LIGHT MODE ADJUSTMENTS
+   ======================================== */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #78350f;
+    background-color: #fffbeb;
+  }
+  
+  a:hover {
+    color: var(--primary-amber);
+  }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+.text-gradient-warm {
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-amber), var(--primary-yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.shadow-warm {
+  box-shadow: 
+    0 4px 16px rgba(var(--accent), 0.1),
+    0 2px 8px rgba(var(--accent-2), 0.08);
+}
+
+.shadow-warm-lg {
+  box-shadow: 
+    0 10px 40px rgba(var(--accent), 0.15),
+    0 4px 16px rgba(var(--accent-2), 0.12);
+}
+
+.border-warm {
+  border-color: rgba(var(--accent), 0.2);
+}
+
+.bg-warm {
+  background: linear-gradient(135deg, 
+    rgba(var(--accent), 0.05), 
+    rgba(var(--accent-2), 0.05));
+}
