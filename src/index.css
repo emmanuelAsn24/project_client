@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -29,7 +29,9 @@ a {
   font-weight: 500;
   color: var(--primary-orange);
   text-decoration: inherit;
-  transition: color 0.3s ease, transform 0.2s ease;
+  transition:
+    color 0.3s ease,
+    transform 0.2s ease;
   display: inline-block;
 }
 
@@ -44,7 +46,11 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  background: linear-gradient(135deg, rgb(var(--bg-warm)) 0%, rgb(var(--cream)) 100%);
+  background: linear-gradient(
+    135deg,
+    rgb(var(--bg-warm)) 0%,
+    rgb(var(--cream)) 100%
+  );
 }
 
 /* ========================================
@@ -58,23 +64,36 @@ body {
 }
 
 .app-root::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: -20% -20% -20% -20%;
-  background: 
-    radial-gradient(circle at 10% 20%, rgba(var(--accent), 0.15), transparent 30%),
-    radial-gradient(circle at 90% 80%, rgba(var(--accent-2), 0.12), transparent 35%),
-    radial-gradient(circle at 50% 50%, rgba(var(--accent-3), 0.08), transparent 40%),
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba(var(--accent), 0.15),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 80%,
+      rgba(var(--accent-2), 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(var(--accent-3), 0.08),
+      transparent 40%
+    ),
     linear-gradient(135deg, rgba(255, 250, 245, 0.8), rgba(255, 248, 236, 0.9));
   filter: blur(80px) saturate(150%);
   z-index: 0;
   transform: scale(1.05);
   animation: meshShift 40s ease-in-out infinite;
   will-change: transform, filter;
+  pointer-events: none; /* ✅ FIX CRITIQUE: Désactive les clics sur le background */
 }
 
 @keyframes meshShift {
-  0% { 
+  0% {
     transform: translate3d(0, 0, 0) scale(1.05) rotate(0deg);
     filter: blur(80px) saturate(150%) hue-rotate(0deg);
   }
@@ -86,7 +105,7 @@ body {
     transform: translate3d(4%, -2%, 0) scale(1.06) rotate(-1deg);
     filter: blur(85px) saturate(155%) hue-rotate(-3deg);
   }
-  100% { 
+  100% {
     transform: translate3d(0, 0, 0) scale(1.05) rotate(0deg);
     filter: blur(80px) saturate(150%) hue-rotate(0deg);
   }
@@ -102,20 +121,20 @@ body {
   border-radius: 16px;
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(249, 115, 22, 0.08),
     0 2px 8px rgba(245, 158, 11, 0.06);
-  transition: 
+  transition:
     transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 280ms ease,
     border-color 280ms ease,
     background-color 280ms ease;
-  z-index: 1;
+  z-index: 10; /* ✅ Augmenté de 1 à 10 pour être au-dessus du background */
 }
 
 .glass-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(249, 115, 22, 0.15),
     0 6px 20px rgba(245, 158, 11, 0.12),
     0 0 0 1px rgba(var(--accent), 0.2);
@@ -124,20 +143,25 @@ body {
 }
 
 .glass-card::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   border-radius: 16px;
   padding: 1px;
-  background: linear-gradient(135deg, 
-    rgba(249, 115, 22, 0.2), 
+  background: linear-gradient(
+    135deg,
+    rgba(249, 115, 22, 0.2),
     rgba(245, 158, 11, 0.1),
-    rgba(251, 191, 36, 0.15));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    rgba(251, 191, 36, 0.15)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 280ms ease;
+  pointer-events: none; /* ✅ Désactive les clics sur le pseudo-élément décoratif */
 }
 
 .glass-card:hover::before {
@@ -152,7 +176,7 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
   align-items: start;
-  z-index: 1;
+  z-index: 10; /* ✅ Augmenté de 1 à 10 */
   padding: 4px;
 }
 
@@ -184,7 +208,8 @@ body {
 
 /* Pulse animation for important elements */
 @keyframes pulse-warm {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(var(--accent), 0.4);
   }
   50% {
@@ -239,26 +264,31 @@ body {
     padding: 1.5rem;
     box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
   }
-  
+
   body.drawer-open .sidebar {
     transform: translateX(0);
   }
-  
+
   /* Backdrop dimmer with warm tint */
   body.drawer-open::after {
-    content: "";
+    content: '';
     position: fixed;
     inset: 0;
     background: rgba(249, 115, 22, 0.1);
     backdrop-filter: blur(4px);
     z-index: 15;
     animation: fadeIn 250ms ease;
+    pointer-events: none; /* ✅ Le backdrop ne doit pas bloquer les clics */
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ========================================
@@ -266,8 +296,9 @@ body {
    ======================================== */
 .content-wrap {
   position: relative;
-  z-index: 2;
+  z-index: 5; /* ✅ Augmenté de 2 à 5 pour hiérarchie claire */
   width: 100%;
+  pointer-events: auto; /* ✅ Force l'interactivité sur le contenu */
 }
 
 /* ========================================
@@ -277,13 +308,21 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary-orange), var(--primary-amber));
+  background: linear-gradient(
+    135deg,
+    var(--primary-orange),
+    var(--primary-amber)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-h2, h3, h4, h5, h6 {
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: #78350f; /* warm brown */
 }
 
@@ -297,22 +336,33 @@ button {
   font-size: 1em;
   font-weight: 600;
   font-family: inherit;
-  background: linear-gradient(135deg, var(--primary-orange), var(--primary-amber));
+  background: linear-gradient(
+    135deg,
+    var(--primary-orange),
+    var(--primary-amber)
+  );
   color: white;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 4px 12px rgba(var(--accent), 0.2);
   position: relative;
   overflow: hidden;
+  z-index: 15; /* ✅ Assure que les boutons sont cliquables */
+  pointer-events: auto; /* ✅ Force l'interactivité */
 }
 
 button::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, var(--primary-amber), var(--primary-yellow));
+  background: linear-gradient(
+    135deg,
+    var(--primary-amber),
+    var(--primary-yellow)
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none; /* ✅ Le pseudo-élément ne doit pas capturer les clics */
 }
 
 button:hover {
@@ -343,6 +393,7 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  pointer-events: none; /* ✅ Boutons désactivés non cliquables */
 }
 
 button:disabled:hover {
@@ -365,7 +416,9 @@ button.btn-secondary:hover {
 /* ========================================
    FORM INPUTS with warm accents
    ======================================== */
-input, textarea, select {
+input,
+textarea,
+select {
   border: 1px solid rgba(var(--accent), 0.2);
   border-radius: 10px;
   padding: 0.75em 1em;
@@ -373,17 +426,37 @@ input, textarea, select {
   background: rgba(255, 255, 255, 0.9);
   transition: all 0.3s ease;
   color: #78350f;
+  position: relative; /* ✅ Crée un contexte de z-index */
+  z-index: 20; /* ✅ CRITIQUE: Au-dessus de tout le reste */
+  pointer-events: auto; /* ✅ Force l'interactivité sur les inputs */
+  user-select: text; /* ✅ Permet la sélection de texte */
+  -webkit-user-select: text; /* ✅ Support Safari */
+  -moz-user-select: text; /* ✅ Support Firefox */
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--primary-orange);
   box-shadow: 0 0 0 3px rgba(var(--accent), 0.1);
   background: white;
+  z-index: 25; /* ✅ Encore plus haut quand en focus */
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: rgba(120, 53, 15, 0.4);
+  user-select: none; /* ✅ Les placeholders ne sont pas sélectionnables */
+}
+
+/* ✅ FIX SUPPLÉMENTAIRE: Conteneurs de formulaires */
+form,
+.form-group,
+.input-wrapper {
+  position: relative;
+  z-index: 15;
+  pointer-events: auto;
 }
 
 /* ========================================
@@ -399,13 +472,21 @@ input::placeholder, textarea::placeholder {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--primary-orange), var(--primary-amber));
+  background: linear-gradient(
+    180deg,
+    var(--primary-orange),
+    var(--primary-amber)
+  );
   border-radius: 5px;
   border: 2px solid rgba(254, 243, 199, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--primary-amber), var(--primary-yellow));
+  background: linear-gradient(
+    180deg,
+    var(--primary-amber),
+    var(--primary-yellow)
+  );
 }
 
 /* ========================================
@@ -416,7 +497,7 @@ input::placeholder, textarea::placeholder {
     color: #78350f;
     background-color: #fffbeb;
   }
-  
+
   a:hover {
     color: var(--primary-amber);
   }
@@ -426,20 +507,25 @@ input::placeholder, textarea::placeholder {
    UTILITY CLASSES
    ======================================== */
 .text-gradient-warm {
-  background: linear-gradient(135deg, var(--primary-orange), var(--primary-amber), var(--primary-yellow));
+  background: linear-gradient(
+    135deg,
+    var(--primary-orange),
+    var(--primary-amber),
+    var(--primary-yellow)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .shadow-warm {
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(var(--accent), 0.1),
     0 2px 8px rgba(var(--accent-2), 0.08);
 }
 
 .shadow-warm-lg {
-  box-shadow: 
+  box-shadow:
     0 10px 40px rgba(var(--accent), 0.15),
     0 4px 16px rgba(var(--accent-2), 0.12);
 }
@@ -449,7 +535,42 @@ input::placeholder, textarea::placeholder {
 }
 
 .bg-warm {
-  background: linear-gradient(135deg, 
-    rgba(var(--accent), 0.05), 
-    rgba(var(--accent-2), 0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(var(--accent), 0.05),
+    rgba(var(--accent-2), 0.05)
+  );
+}
+
+/* ========================================
+   ✅ CLASSES D'ACCESSIBILITÉ AJOUTÉES
+   ======================================== */
+.interactive {
+  pointer-events: auto !important;
+  user-select: text !important;
+  z-index: 20 !important;
+}
+
+.non-interactive {
+  pointer-events: none !important;
+}
+
+/* Force l'interactivité sur tous les éléments de formulaire */
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='search'],
+input[type='tel'],
+input[type='url'],
+textarea,
+select,
+button:not(:disabled) {
+  pointer-events: auto !important;
+  user-select: text !important;
+  cursor: text;
+}
+
+button:not(:disabled) {
+  cursor: pointer !important;
 }

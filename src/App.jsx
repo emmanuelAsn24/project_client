@@ -1,23 +1,21 @@
-import { useState } from 'react'
-import {Routes, Route, Navigate} from 'react-router-dom'
-import { SecuritySpace } from './pages/security_space'
-import Home from './pages/home'
-import PrivateRoute from './pages/privateRoute'
-import Login from './pages/login'
-import Register from './pages/register'
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { SecuritySpace } from './pages/security_space';
+import Home from './pages/home';
+import PrivateRoute from './pages/privateRoute';
+import Login from './pages/login';
+import Register from './pages/register';
 
 function App() {
-
   return (
-    <div className="min-h-screen w-screen app-root">
+    <div className="h-screen w-screen overflow-hidden">
+      {/* ✅ Remplacé min-h-screen par h-screen + overflow-hidden */}
       <Routes>
         <Route index element={<Navigate to="/home" replace />} />
         <Route
           path="/home"
           element={
             <PrivateRoute>
-              {" "}
-              <Home />{" "}
+              <Home />
             </PrivateRoute>
           }
         />
@@ -29,7 +27,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace={true} />} />
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

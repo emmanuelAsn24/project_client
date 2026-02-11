@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const URL = 'http://localhost:3000'
+const URL = import.meta.env.VITE_URL;
 
 const initialState = {
     connectedUser: null,
@@ -49,7 +49,8 @@ const authSlice = createSlice({
         })
         .addCase(authenticate.fulfilled, (state, action) => {
             const {data: {user, accessToken}} = action.payload
-            console.log('action.payload dans authSlice:', action.payload);
+            console.log('user:', user);
+            console.log('accessToken:', accessToken);
             localStorage.setItem('token', accessToken)
             state.connectedUser = user;
             state.isAuthenticated = true;
