@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getState, setStatusToIdle } from "../redux/slices/authSlice";
-import RegisterForm from "../components/RegisterForm";
+import RegisterForm from "../components/registerForm";
 import { p } from "../components/theme";
 
 function Register() {
