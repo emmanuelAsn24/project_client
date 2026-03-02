@@ -1,203 +1,242 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
+import { p } from '../components/theme'
 
 export const SecuritySpace = () => {
-  return(
-    <div className="flex h-screen w-screen overflow-hidden relative bg-gradient-to-br from-slate-50 via-orange-50 to-amber-50">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-gradient-to-br from-orange-300/20 to-amber-300/20 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-[-15%] right-[-10%] w-[600px] h-[600px] bg-gradient-to-br from-yellow-300/20 to-orange-300/20 rounded-full blur-3xl animate-float-delayed"></div>
-        <div className="absolute top-[40%] left-[50%] w-[400px] h-[400px] bg-gradient-to-br from-amber-300/15 to-yellow-300/15 rounded-full blur-3xl animate-pulse-slow"></div>
+  return (
+    <div style={{
+      display: "flex",
+      height: "100vh",
+      width: "100vw",
+      overflow: "hidden",
+      fontFamily: p.font,
+      background: p.bg,
+      position: "relative",
+    }}>
+
+      {/* ── Blobs décoratifs fond ───────────────────── */}
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+        <div style={{
+          position: "absolute", top: "-20%", left: "-10%",
+          width: 500, height: 500, borderRadius: "50%",
+          background: `radial-gradient(circle, ${p.primary}18, transparent 70%)`,
+          animation: "blob 20s ease-in-out infinite",
+        }} />
+        <div style={{
+          position: "absolute", bottom: "-15%", right: "-10%",
+          width: 600, height: 600, borderRadius: "50%",
+          background: `radial-gradient(circle, ${p.amber}18, transparent 70%)`,
+          animation: "blob 25s ease-in-out infinite 3s",
+        }} />
+        <div style={{
+          position: "absolute", top: "40%", left: "50%",
+          width: 400, height: 400, borderRadius: "50%",
+          background: `radial-gradient(circle, ${p.secondary}12, transparent 70%)`,
+          animation: "blobPulse 8s ease-in-out infinite",
+        }} />
       </div>
 
-      {/* Left panel - Hero section */}
-      <div className="hidden flex-1 items-center justify-center relative lg:flex overflow-hidden">
-        {/* Gradient overlay with pattern */}
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-amber-600 to-yellow-500 opacity-95"></div>
-        
-        {/* Animated pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `
-              repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px),
-              repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px)
-            `
-          }}></div>
-        </div>
+      {/* ── Panel gauche — Hero ─────────────────────── */}
+      <div style={{
+        flex: 1,
+        display: "none",
+        position: "relative",
+        overflow: "hidden",
+      }}
+        ref={el => { if (el) el.style.display = window.innerWidth >= 1024 ? "flex" : "none"; }}
+        className="lg-panel"
+      >
+        {/* Gradient warm */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: `linear-gradient(135deg, ${p.primary} 0%, ${p.secondary} 50%, ${p.amber} 100%)`,
+          opacity: 0.97,
+        }} />
 
-        {/* Floating task cards decoration */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[15%] left-[10%] w-32 h-32 bg-white/10 backdrop-blur-sm rounded-2xl transform rotate-12 animate-float-card-1 shadow-2xl"></div>
-          <div className="absolute top-[60%] left-[15%] w-24 h-24 bg-white/10 backdrop-blur-sm rounded-2xl transform -rotate-6 animate-float-card-2 shadow-2xl"></div>
-          <div className="absolute top-[35%] right-[12%] w-28 h-28 bg-white/10 backdrop-blur-sm rounded-2xl transform rotate-6 animate-float-card-3 shadow-2xl"></div>
-          <div className="absolute bottom-[20%] right-[18%] w-20 h-20 bg-white/10 backdrop-blur-sm rounded-2xl transform -rotate-12 animate-float-card-4 shadow-2xl"></div>
-        </div>
+        {/* Pattern overlay */}
+        <div style={{
+          position: "absolute", inset: 0, opacity: 0.08,
+          backgroundImage: `
+            repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.15) 35px, rgba(255,255,255,.15) 70px),
+            repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(255,255,255,.15) 35px, rgba(255,255,255,.15) 70px)
+          `,
+        }} />
 
-        {/* Content */}
-        <div className="relative max-w-2xl space-y-6 p-8 text-center text-white z-10">
-          {/* Animated icon container */}
-          <div className="flex justify-center mb-8">
-            <div className="relative group">
-              <div className="absolute inset-0 bg-white/30 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-              <div className="relative bg-white/20 backdrop-blur-md p-6 rounded-full border-2 border-white/40 transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-12">
-                <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-              </div>
+        {/* Cartes flottantes décoratives */}
+        {[
+          { top: "15%", left: "10%",  size: 120, rotate: "12deg",  delay: "0s",   duration: "15s" },
+          { top: "60%", left: "15%",  size: 90,  rotate: "-6deg",  delay: "2s",   duration: "18s" },
+          { top: "35%", right: "12%", size: 110, rotate: "6deg",   delay: "1s",   duration: "20s" },
+          { bottom: "20%", right: "18%", size: 75, rotate: "-12deg", delay: "3s", duration: "16s" },
+        ].map((card, i) => (
+          <div key={i} style={{
+            position: "absolute",
+            top: card.top, left: card.left, right: card.right, bottom: card.bottom,
+            width: card.size, height: card.size,
+            borderRadius: "1.25rem",
+            background: "rgba(255,255,255,0.12)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            transform: `rotate(${card.rotate})`,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+            animation: `floatCard ${card.duration} ease-in-out infinite ${card.delay}`,
+          }} />
+        ))}
+
+        {/* Contenu hero */}
+        <div style={{
+          position: "relative", zIndex: 10,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          width: "100%", height: "100%",
+          padding: "2rem",
+        }}>
+          <div style={{ maxWidth: 480, textAlign: "center", color: "#fff" }}>
+
+            {/* Icône principale */}
+            <div style={{
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              width: 96, height: 96, borderRadius: "50%",
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(12px)",
+              border: "2px solid rgba(255,255,255,0.35)",
+              fontSize: "2.5rem",
+              marginBottom: "2rem",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+              transition: "transform 0.4s ease",
+              cursor: "default",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.1) rotate(12deg)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "scale(1) rotate(0deg)"; }}
+            >
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                <rect x="9" y="3" width="6" height="4" rx="1"/>
+                <path d="M9 12l2 2 4-4"/>
+              </svg>
             </div>
-          </div>
 
-          <h1 className="text-5xl font-bold leading-tight animate-fade-in-up drop-shadow-lg">
-            Gestion des Tâches
-          </h1>
-          
-          <div className="space-y-3 animate-fade-in-up-delayed">
-            <p className="text-xl font-light text-white/90">
-              Espace de Sécurité
+            {/* Titre */}
+            <h1 style={{
+              fontSize: "2.75rem", fontWeight: 900,
+              margin: "0 0 1rem", lineHeight: 1.1,
+              letterSpacing: "-0.03em",
+              textShadow: "0 2px 16px rgba(0,0,0,0.15)",
+              animation: "fadeInUp 0.8s ease both",
+            }}>
+              Gestion des<br />
+              <span style={{ opacity: 0.9 }}>Tâches</span>
+            </h1>
+
+            {/* Séparateur */}
+            <div style={{
+              width: 48, height: 3, borderRadius: 99,
+              background: "rgba(255,255,255,0.5)",
+              margin: "0 auto 1rem",
+            }} />
+
+            <p style={{
+              fontSize: "0.95rem", opacity: 0.85, lineHeight: 1.7,
+              marginBottom: "2.5rem",
+              animation: "fadeInUp 0.8s ease 0.2s both",
+            }}>
+              Organisez, priorisez et accomplissez<br />vos objectifs avec efficacité
             </p>
-            <div className="h-1 w-24 bg-white/40 mx-auto rounded-full"></div>
-            <p className="text-sm text-white/80 max-w-md mx-auto leading-relaxed">
-              Organisez, priorisez et accomplissez vos objectifs avec efficacité
-            </p>
-          </div>
 
-          {/* Feature highlights */}
-          <div className="grid grid-cols-3 gap-4 mt-12 animate-fade-in-up-delayed-2">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 transform transition-all duration-300 hover:scale-105 hover:bg-white/20">
-              <div className="text-3xl font-bold mb-1">✓</div>
-              <div className="text-xs text-white/90">Organisé</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 transform transition-all duration-300 hover:scale-105 hover:bg-white/20">
-              <div className="text-3xl font-bold mb-1">⚡</div>
-              <div className="text-xs text-white/90">Rapide</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 transform transition-all duration-300 hover:scale-105 hover:bg-white/20">
-              <div className="text-3xl font-bold mb-1">🎯</div>
-              <div className="text-xs text-white/90">Efficace</div>
+            {/* Features */}
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "0.875rem",
+              animation: "fadeInUp 0.8s ease 0.4s both",
+            }}>
+              {[
+                { icon: "✓", label: "Organisé"  },
+                { icon: "⚡", label: "Rapide"    },
+                { icon: "🎯", label: "Efficace"  },
+              ].map(({ icon, label }) => (
+                <div key={label}
+                  style={{
+                    background: "rgba(255,255,255,0.12)",
+                    backdropFilter: "blur(8px)",
+                    borderRadius: "1rem",
+                    padding: "1rem 0.5rem",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                    transition: "all 0.25s ease",
+                    cursor: "default",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = "rgba(255,255,255,0.22)";
+                    e.currentTarget.style.transform = "translateY(-3px)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = "rgba(255,255,255,0.12)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
+                >
+                  <div style={{ fontSize: "1.75rem", marginBottom: "0.35rem" }}>{icon}</div>
+                  <div style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.9 }}>{label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Right panel - Form section */}
-      <div className="flex flex-1 items-center justify-center relative z-10">
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-bl from-white/50 via-transparent to-white/30"></div>
-        
-        <div className="relative max-w-md w-full overflow-y-auto px-4 sm:px-6 py-8">
-          <Outlet/>
+      {/* ── Panel droit — Formulaire ────────────────── */}
+      <div style={{
+        flex: 1, position: "relative", zIndex: 10,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "2rem 1.5rem",
+        overflowY: "auto",
+        background: "rgba(255,253,249,0.7)",
+        backdropFilter: "blur(12px)",
+      }}>
+        {/* Halo décoratif derrière le form */}
+        <div style={{
+          position: "absolute",
+          top: "50%", left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400, height: 400, borderRadius: "50%",
+          background: `radial-gradient(circle, ${p.primary}08, transparent 70%)`,
+          pointerEvents: "none",
+        }} />
+
+        <div style={{
+          position: "relative", zIndex: 1,
+          width: "100%", maxWidth: 420,
+        }}>
+          <Outlet />
         </div>
       </div>
 
-      {/* Custom animations */}
+      {/* ── Animations ─────────────────────────────── */}
       <style>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translate(0, 0) rotate(0deg);
-          }
-          33% {
-            transform: translate(30px, -30px) rotate(5deg);
-          }
-          66% {
-            transform: translate(-20px, 20px) rotate(-5deg);
+        .lg-panel {
+          display: none !important;
+        }
+        @media (min-width: 1024px) {
+          .lg-panel {
+            display: flex !important;
           }
         }
 
-        @keyframes float-delayed {
-          0%, 100% {
-            transform: translate(0, 0) rotate(0deg);
-          }
-          33% {
-            transform: translate(-40px, 30px) rotate(-8deg);
-          }
-          66% {
-            transform: translate(30px, -25px) rotate(8deg);
-          }
+        @keyframes blob {
+          0%, 100% { transform: translate(0,0) scale(1); }
+          33%       { transform: translate(30px,-30px) scale(1.08); }
+          66%       { transform: translate(-20px,20px) scale(0.94); }
         }
-
-        @keyframes pulse-slow {
-          0%, 100% {
-            transform: scale(1);
-            opacity: 0.15;
-          }
-          50% {
-            transform: scale(1.1);
-            opacity: 0.25;
-          }
+        @keyframes blobPulse {
+          0%, 100% { transform: scale(1); opacity: 0.15; }
+          50%       { transform: scale(1.12); opacity: 0.25; }
         }
-
-        @keyframes float-card-1 {
-          0%, 100% { transform: translate(0, 0) rotate(12deg); }
-          50% { transform: translate(10px, -20px) rotate(18deg); }
+        @keyframes floatCard {
+          0%, 100% { transform: translateY(0) rotate(var(--r, 6deg)); }
+          50%       { transform: translateY(-18px) rotate(calc(var(--r, 6deg) + 6deg)); }
         }
-
-        @keyframes float-card-2 {
-          0%, 100% { transform: translate(0, 0) rotate(-6deg); }
-          50% { transform: translate(-15px, 15px) rotate(-12deg); }
-        }
-
-        @keyframes float-card-3 {
-          0%, 100% { transform: translate(0, 0) rotate(6deg); }
-          50% { transform: translate(15px, 20px) rotate(12deg); }
-        }
-
-        @keyframes float-card-4 {
-          0%, 100% { transform: translate(0, 0) rotate(-12deg); }
-          50% { transform: translate(-10px, -15px) rotate(-18deg); }
-        }
-
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-float {
-          animation: float 20s ease-in-out infinite;
-        }
-
-        .animate-float-delayed {
-          animation: float-delayed 25s ease-in-out infinite;
-        }
-
-        .animate-pulse-slow {
-          animation: pulse-slow 8s ease-in-out infinite;
-        }
-
-        .animate-float-card-1 {
-          animation: float-card-1 15s ease-in-out infinite;
-        }
-
-        .animate-float-card-2 {
-          animation: float-card-2 18s ease-in-out infinite;
-        }
-
-        .animate-float-card-3 {
-          animation: float-card-3 20s ease-in-out infinite;
-        }
-
-        .animate-float-card-4 {
-          animation: float-card-4 16s ease-in-out infinite;
-        }
-
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s ease-out;
-        }
-
-        .animate-fade-in-up-delayed {
-          animation: fade-in-up 0.8s ease-out 0.2s both;
-        }
-
-        .animate-fade-in-up-delayed-2 {
-          animation: fade-in-up 0.8s ease-out 0.4s both;
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(18px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>
-  )
+  );
 }

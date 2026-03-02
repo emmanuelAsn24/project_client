@@ -1,154 +1,178 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { isFormInvalid } from '../utils/isFormInvalide';
-import { useDispatch, useSelector } from 'react-redux'
-import { authenticate} from '../redux/slices/authSlice';
-import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { authenticate } from "../redux/slices/authSlice";
+import { useNavigate, Link } from "react-router-dom";
+import { p } from "./theme";
 
-
-function LoginForm() {
-    const [showPwd, setShowPwd] = useState(false)
-    const {register, handleSubmit, formState: {errors}} = useForm()  
-    const navigate = useNavigate()  
-    const dispatch = useDispatch()
-
-    const {status, isAuthenticated} = useSelector((state) => state.authReducer)
-
-    const handleClick = () => navigate('/security/register');
-
-    const onHandleSubmit  = (data) => {
-      dispatch(authenticate(data));
-    console.log("data", data);
-    };
-
-    useEffect(() => {
-      if (status === 'success' && isAuthenticated) {
-        navigate("/home")
-      }
-    }, [status, isAuthenticated]);
-
-    useEffect(() => {
-      if (isFormInvalid(errors)) {
-        document.getElementById('loginSubmit').classList.add(["hover:cursor-not-allowed"])
-      } else {
-        document.getElementById('loginSubmit').classList.remove(["hover:cursor-not-allowed"])
-      }
-    })
+const InputField = ({ label, type = "text", error, children, ...props }) => {
+  const [focused, setFocused] = useState(false);
+  const hasValue = props.value && props.value.length > 0;
 
   return (
-    <div className="w-full">
-      <form onSubmit={handleSubmit(onHandleSubmit)}>
-      <div className="flex flex-col justify-center items-center gap-6 w-full mt-5">
-        <div className="relative w-full  h-10">
-            <input
-            className="form-control peer w-11/12 h-full 
-            text-blue-gray-700 font-sans font-normal 
-            outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 
-            disabled:border-0 transition-all placeholder-shown:border 
-            placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border 
-            focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] 
-            border-blue-gray-200 focus:border-gray-900"
-            type="text"
-            name="email"
-            {...register("email", {
-              required: "l'Email est obligatoire!",
-              pattern: {
-                value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
-                message: "l'Email est invalide"
-              } 
-            })}
-            placeholder=" " />
-            {errors.email && errors.email.type === "required" && (
-                <p className="text-xs  text-red-500">{errors.email.message}</p>
-            )}
-            {errors.email && errors.email.type === "pattern" && (
-                <p className="text-xs text-red-500">{errors.email.message}</p>
-            )}
-            <label
-            className="flex w-11/12 h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900">
-            Email
-            </label>
-        </div>
-        <div className="relative w-full h-11 ">
-                
-                <input
-                className="form-control w-11/12 h-full 
-                px-3 py-3 font-sans text-sm font-normal transition-all 
-                border rounded-md peer text-blue-gray-700 outline 
-                outline-0 focus:outline-0 disabled:bg-blue-gray-50 
-                disabled:border-0 placeholder-shown:border 
-                placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 
-                focus:border-2 border-t-transparent focus:border-t-transparent border-blue-gray-200 focus:border-gray-900"
-                type={showPwd ? "text" : "password"}
-                name="password"
-                {...register("password", {
-                  required: "le mot de passe obligatoire.",
-                  minLength: {
-                    value: 6,
-                    message: 'le mot de passe doit comporter au moins 6 caracteres!!'
-                  }
-                })}
-                placeholder=" " />
-                <button type='button' onClick={()=> setShowPwd(!showPwd)}>
-                  <i className={`fa icon ml-2 ${!showPwd ? "fa-eye": "fa-eye-slash"} `} ></i>
-                </button>
-
-                {errors.password && errors.password.type === "required" && (
-                <p className="text-xs text-red-500"> {errors.password.message} </p>
-                )}
-                {errors.password && errors.password.type === "minLength" && (
-                  <p className="text-xs text-red-500"> {errors.password.message} </p>
-                )}
-                <label
-                className="flex w-11/12 h-full select-none pointer-events-none 
-                absolute left-0 font-normal !overflow-visible truncate 
-                peer-placeholder-shown:text-blue-gray-500 leading-tight 
-                peer-focus:leading-tight peer-disabled:text-transparent 
-                peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 
-                peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] 
-                before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 
-                peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t 
-                peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none 
-                before:transition-all peer-disabled:before:border-transparent after:content[' '] 
-                after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] 
-                after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t
-                 peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none 
-                 after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[4.1]
-                  text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200
-                  after:border-blue-gray-200 peer-focus:after:!border-gray-900">
-                Password
-                </label>
-                
+    <div style={{ width: "100%", position: "relative", marginBottom: "0.25rem" }}>
+      <div style={{
+        position: "relative",
+        borderRadius: p.radius,
+        border: `2px solid ${error ? "#E53E3E" : focused ? p.primary : p.border}`,
+        background: focused ? "#FFFBF8" : p.inputBg,
+        transition: "all 0.2s ease",
+        boxShadow: focused ? `0 0 0 4px ${error ? "#E53E3E" : p.primary}15` : "none",
+      }}>
+        <input
+          type={type}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          style={{
+            width: "100%", border: "none", outline: "none",
+            background: "transparent",
+            padding: "1rem 3rem 0.5rem 1rem",
+            fontSize: "0.9rem", color: p.text, fontFamily: p.font,
+            boxSizing: "border-box",
+          }}
+          placeholder=""
+          {...props}
+        />
+        <label style={{
+          position: "absolute", left: "1rem",
+          top: focused || hasValue ? "0.35rem" : "0.85rem",
+          fontSize: focused || hasValue ? "0.68rem" : "0.88rem",
+          color: error ? "#E53E3E" : focused ? p.primary : p.mutedLight,
+          fontWeight: focused || hasValue ? 600 : 400,
+          transition: "all 0.2s ease",
+          pointerEvents: "none", userSelect: "none",
+        }}>{label}</label>
+        {children && (
+          <div style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)" }}>
+            {children}
           </div>
-        </div>
-
-
-       
-        <div className="form-control pt-5 flex flex-row justify-between">
-            <button 
-                type="submit"  
-                id='loginSubmit'
-                className="bg-gray-800, mb-3 border border-green-700
-                inline-block w-100 rounded px-6 pb-2 pt-2.5 
-                text-xs font-medium  leading-normal 
-                shadow-[0_4px_9px_-4px_rgba(0,0,0,0.2)] 
-                transition duration-150 ease-in-out 
-                hover:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] 
-                focus:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] 
-                focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)]"
-                data-te-ripple-init data-te-ripple-color="light"
-            >
-            Connection
-          </button>
-          <Link to="/security/register" className="font-semibold mt-3 text-indigo-600 hover:text-indigo-500">{"je crée mon compte"}</Link>
-          {/* <a href="#!" onClick={handleClick} className="font-semibold mt-3 text-indigo-600 hover:text-indigo-500">
-              je crée mon compte
-          </a> */}
-         
-        </div>
-      </form>
+        )}
+      </div>
+      {error && (
+        <p style={{ fontSize: "0.72rem", color: "#E53E3E", margin: "0.3rem 0 0 0.25rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+          <span>⚠</span> {error}
+        </p>
+      )}
     </div>
-  )
+  );
+};
+
+// Wrapper pour react-hook-form (controlled via register)
+const RHFInput = ({ label, type = "text", registration, error, showToggle, onToggle, showPwd }) => {
+  const [focused, setFocused] = useState(false);
+
+  return (
+    <div style={{ width: "100%", position: "relative", marginBottom: "0.25rem" }}>
+      <div style={{
+        position: "relative", borderRadius: p.radius,
+        border: `2px solid ${error ? "#E53E3E" : focused ? p.primary : p.border}`,
+        background: focused ? "#FFFBF8" : p.inputBg,
+        transition: "all 0.2s ease",
+        boxShadow: focused ? `0 0 0 4px ${error ? "#E53E3E" : p.primary}15` : "none",
+      }}>
+        <input
+          type={showToggle ? (showPwd ? "text" : "password") : type}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          placeholder=""
+          style={{
+            width: "100%", border: "none", outline: "none",
+            background: "transparent",
+            padding: "1rem 3rem 0.5rem 1rem",
+            fontSize: "0.9rem", color: p.text, fontFamily: p.font,
+            boxSizing: "border-box",
+          }}
+          {...registration}
+        />
+        <label style={{
+          position: "absolute", left: "1rem",
+          top: focused ? "0.35rem" : "0.85rem",
+          fontSize: focused ? "0.68rem" : "0.88rem",
+          color: error ? "#E53E3E" : focused ? p.primary : p.mutedLight,
+          fontWeight: focused ? 600 : 400,
+          transition: "all 0.2s ease",
+          pointerEvents: "none",
+        }}>{label}</label>
+        {showToggle && (
+          <button type="button" onClick={onToggle} style={{
+            position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)",
+            border: "none", background: "transparent", cursor: "pointer",
+            color: p.muted, fontSize: "1rem", padding: 0,
+          }}>
+            {showPwd ? "🙈" : "👁️"}
+          </button>
+        )}
+      </div>
+      {error && (
+        <p style={{ fontSize: "0.72rem", color: "#E53E3E", margin: "0.3rem 0 0 0.25rem" }}>
+          ⚠ {error}
+        </p>
+      )}
+    </div>
+  );
+};
+
+function LoginForm() {
+  const [showPwd, setShowPwd] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const navigate   = useNavigate();
+  const dispatch   = useDispatch();
+  const { status, isAuthenticated } = useSelector(s => s.authReducer);
+
+  const onSubmit = (data) => dispatch(authenticate(data));
+
+  useEffect(() => {
+    if (status === "success" && isAuthenticated) navigate("/home");
+  }, [status, isAuthenticated]);
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <RHFInput
+        label="Adresse email"
+        type="text"
+        registration={register("email", {
+          required: "L'email est obligatoire",
+          pattern: { value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/, message: "Email invalide" },
+        })}
+        error={errors.email?.message}
+      />
+      <RHFInput
+        label="Mot de passe"
+        showToggle
+        showPwd={showPwd}
+        onToggle={() => setShowPwd(v => !v)}
+        registration={register("password", {
+          required: "Le mot de passe est obligatoire",
+          minLength: { value: 6, message: "6 caractères minimum" },
+        })}
+        error={errors.password?.message}
+      />
+
+      {/* Submit */}
+      <button type="submit" style={{
+        width: "100%", padding: "0.875rem",
+        borderRadius: p.radius, border: "none",
+        background: `linear-gradient(135deg, ${p.primary}, ${p.amber})`,
+        color: "#fff", fontSize: "0.95rem", fontWeight: 700,
+        cursor: "pointer", fontFamily: p.font,
+        boxShadow: `0 6px 20px ${p.primary}45`,
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        marginTop: "0.25rem",
+      }}
+        onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 10px 28px ${p.primary}55`; }}
+        onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = `0 6px 20px ${p.primary}45`; }}
+      >
+        {status === "loading" ? "Connexion..." : "Se connecter"}
+      </button>
+
+      <p style={{ textAlign: "center", fontSize: "0.82rem", color: p.muted, margin: 0 }}>
+        Pas encore de compte ?{" "}
+        <Link to="/security/register" style={{ color: p.primary, fontWeight: 700, textDecoration: "none" }}>
+          Créer un compte →
+        </Link>
+      </p>
+    </form>
+  );
 }
 
-export default LoginForm
+export default LoginForm;

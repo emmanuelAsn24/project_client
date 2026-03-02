@@ -7,8 +7,9 @@ import Register from './pages/register';
 
 function App() {
   return (
-    <div className="h-screen w-screen overflow-hidden">
-      {/* ✅ Remplacé min-h-screen par h-screen + overflow-hidden */}
+    // ✅ On retire overflow-hidden qui bloquait le scroll de Home
+    // ✅ Le div racine laisse chaque page gérer son propre scroll
+    <div style={{ height: "100vh", width: "100vw", overflow: "hidden", display: "flex" }}>
       <Routes>
         <Route index element={<Navigate to="/home" replace />} />
         <Route

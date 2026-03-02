@@ -1,0 +1,21 @@
+// src/components/theme.js
+export const p = {
+  bg:          "#FFFDF9",
+  sidebarBg:   "#FFF8F2",
+  primary:     "#E8652A",
+  secondary:   "#D4845A",
+  amber:       "#F5A623",
+  green:       "#4CAF82",
+  muted:       "#7A6352",
+  mutedLight:  "#B09A8C",
+  text:        "#2D1F14",
+  card:        "#FFFFFF",
+  border:      "#F0E6DB",
+  inputBg:     "#FFF8F3",
+  shadow:      "0 4px 24px rgba(232,101,42,0.08)",
+  shadowHover: "0 8px 32px rgba(232,101,42,0.18)",
+  radius:      "1rem",
+  radiusSm:    "0.75rem",
+  radiusLg:    "1.25rem",
+  font:        "'Inter','Segoe UI',system-ui,sans-serif",
+};

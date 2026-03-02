@@ -1,206 +1,166 @@
-import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form';
-import { useDispatch, useSelector } from 'react-redux';
-import { getState, register as createAccount, setStatusToIdle } from '../redux/slices/authSlice';
-import Spinner from './spinner';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { getState, register as createAccount, setStatusToIdle } from "../redux/slices/authSlice";
+import { useNavigate, Link } from "react-router-dom";
+import Spinner from "./spinner";
+import { p } from "./theme";
 
-
-
+const RHFInput = ({ label, type = "text", registration, error, showToggle, onToggle, showPwd }) => {
+  const [focused, setFocused] = useState(false);
+  return (
+    <div style={{ width: "100%" }}>
+      <div style={{
+        position: "relative", borderRadius: p.radius,
+        border: `2px solid ${error ? "#E53E3E" : focused ? p.primary : p.border}`,
+        background: focused ? "#FFFBF8" : p.inputBg,
+        transition: "all 0.2s ease",
+        boxShadow: focused ? `0 0 0 4px ${error ? "#E53E3E" : p.primary}15` : "none",
+      }}>
+        <input
+          type={showToggle ? (showPwd ? "text" : "password") : type}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          placeholder=""
+          style={{
+            width: "100%", border: "none", outline: "none", background: "transparent",
+            padding: "1rem 3rem 0.5rem 1rem",
+            fontSize: "0.9rem", color: p.text, fontFamily: p.font,
+            boxSizing: "border-box",
+          }}
+          {...registration}
+        />
+        <label style={{
+          position: "absolute", left: "1rem",
+          top: focused ? "0.35rem" : "0.85rem",
+          fontSize: focused ? "0.68rem" : "0.88rem",
+          color: error ? "#E53E3E" : focused ? p.primary : p.mutedLight,
+          fontWeight: focused ? 600 : 400,
+          transition: "all 0.2s ease", pointerEvents: "none",
+        }}>{label}</label>
+        {showToggle && (
+          <button type="button" onClick={onToggle} style={{
+            position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)",
+            border: "none", background: "transparent", cursor: "pointer", color: p.muted, fontSize: "1rem",
+          }}>
+            {showPwd ? "🙈" : "👁️"}
+          </button>
+        )}
+      </div>
+      {error && (
+        <p style={{ fontSize: "0.72rem", color: "#E53E3E", margin: "0.3rem 0 0 0.25rem" }}>⚠ {error}</p>
+      )}
+    </div>
+  );
+};
 
 function RegisterForm() {
+  const [showPwd, setShowPwd] = useState(false);
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm();
+  const { status, message } = useSelector(getState);
+  const dispatch = useDispatch();
 
-    const [showPwd, setShowPwd] = useState(false)
+  useEffect(() => {
+    if (["success", "failed"].includes(status)) {
+      setTimeout(() => dispatch(setStatusToIdle()), 6000);
+    }
+  }, [status]);
 
-     const {register, handleSubmit, formState: {errors}, getValues} = useForm()
-
-     const {status, message} = useSelector(getState)
-    
-    const dispatch = useDispatch()
-
-    const navigate = useNavigate()
-
-    const backToLogin = () => navigate('/security/login');
-    
-    const onHandleSubmit = (data) => {
-      dispatch(createAccount(data))
-    };
-
-    useEffect(() => {
-      if (['success', 'failed'].includes(status)) {
-        setTimeout(() => {
-          dispatch(setStatusToIdle())
-        }, 6000);
-      }
-      // navigate("/security/login")
-      
-    }, [status]);  
+  const onSubmit = (data) => dispatch(createAccount(data));
 
   return (
-    <div className="w-full">
-      {
-        ((status === 'failed') && message) && (
-        <div className="bg-red-400 text-dark-800 p-4 text-sm rounded-full border border-red-500">
-          { message }
-        </div>)
-      }
-       {
-        ((status === 'success') && message) && (
-        <div className="bg-green-900 text-dark-800 p-4 text-sm text-white rounded-full border border-green-700">
-          { message }
-        </div>)
-      }
-      {
-        (status === 'loading') && ( <Spinner/> )
-      }
-      <form onSubmit={handleSubmit(onHandleSubmit)}>
-      <div className="flex flex-col justify-center items-center gap-6 w-full mt-5">
-      <div className="relative w-full  h-10">
-            <input
-            type="text"
-            name="email"
-            {...register("email", {
-              required: "Email obligatore",
-              pattern: {
-                value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
-                message: "Email invalide"
-              }
-            })}
-            className="form-control w-11/12 h-full 
-            px-3 py-3 font-sans text-sm font-normal transition-all 
-            border rounded-md peer text-blue-gray-700 outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 border-t-transparent focus:border-t-transparent border-blue-gray-200 focus:border-gray-900"
-            placeholder=" " />
-            {errors.email && errors.email.type === "required" && (
-                <p className="text-xs  text-red-500">{errors.email.message}</p>
-            )}
-            {errors.email && errors.email.type === "pattern" && (
-                <p className="text-xs  text-red-500">{errors.email.message}</p>
-            )}
-            <label
-            className="flex w-11/12 h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900">
-            Email
-            </label>
+    <div style={{ width: "100%" }}>
+      {/* Messages status */}
+      {status === "failed" && message && (
+        <div style={{
+          padding: "0.875rem 1rem", borderRadius: p.radius, marginBottom: "1rem",
+          background: "#FEF2F2", border: "1px solid #FECACA",
+          fontSize: "0.82rem", color: "#B91C1C",
+          display: "flex", alignItems: "center", gap: "0.5rem",
+        }}>
+          <span>⚠️</span> {message}
         </div>
-        <div className="relative w-full  h-10">
-            <input
-            type="text"
-            name="name"
-            {...register("name", {
-              required: "Veuillez entrer votre nom",
-              maxLength: {
-                value: 15,
-                message: "Le nom doit tenir sur 15 caracteres maximum." 
-              }
-            })}
-            className="form-control w-11/12 h-full 
-            px-3 py-3 font-sans text-sm font-normal transition-all 
-            border rounded-md peer text-blue-gray-700 outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 border-t-transparent focus:border-t-transparent border-blue-gray-200 focus:border-gray-900"
-            placeholder=" " />
-              {errors.name && errors.name.type === "required" && (
-                <p className="text-xs  text-red-500">{errors.name.message}</p>
-            )}
-            {errors.name && errors.name.type === "maxLength" && (
-                <p className="text-xs  text-red-500">{errors.name.message}</p>
-            )}
-            <label
-            className="flex w-11/12 h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900">
-            Name
-            </label>
+      )}
+      {status === "success" && message && (
+        <div style={{
+          padding: "0.875rem 1rem", borderRadius: p.radius, marginBottom: "1rem",
+          background: "#F0FBF5", border: "1px solid #86EFAC",
+          fontSize: "0.82rem", color: "#166534",
+          display: "flex", alignItems: "center", gap: "0.5rem",
+        }}>
+          <span>✅</span> {message}
         </div>
-        <div className="relative w-full  h-11">
-            <input
-            type={showPwd ? "text" : "password"}
-            name="password"
-            {...register("password", {
-              required: "entrez votre mot de passe",
-              minLength: {
-                value: 6,
-                message: "le mot de passe doit avoir 6 caractères au moins"
-              },
-              maxLength: {
-                value: 15,
-                message: "le mot de passe doit avoir 15 caractères au plus"
-              }
-            })}
-            className="form-control w-11/12 h-full 
-            px-3 py-3 font-sans text-sm font-normal transition-all 
-            border rounded-md peer text-blue-gray-700 outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 border-t-transparent focus:border-t-transparent border-blue-gray-200 focus:border-gray-900"
-            placeholder=" " />
-             <button type='button' onClick={()=> setShowPwd(!showPwd)}>
-                  <i className={`fa icon ml-2 ${!showPwd ? "fa-eye": "fa-eye-slash"} `} ></i>
-              </button>
-            {errors.password && errors.password.type === "required" && (
-                <p className="text-xs  text-red-500">{errors.password.message}</p>
-            )}
-            {errors.password && errors.password.type === "minLength" && (
-                <p className="text-xs  text-red-500">{errors.password.message}</p>
-            )}
-             {errors.password && errors.password.type === "maxLength" && (
-                <p className="text-xs  text-red-500">{errors.password.message}</p>
-            )}
-            <label
-            className="flex w-11/12 h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[4.1] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900">
-            Password
-            </label>
+      )}
+      {status === "loading" && (
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
+          <Spinner />
         </div>
-        <div className="relative w-full  h-11">
-            <input
-            type={showPwd ? "text" : "password"}
-            name="cpassword"
-            {...register("cpassword", {
-              required: "Confirmer le mot de passe!",
-              validate: (value) => {
-                const { password } = getValues();
-                return password === value || "Les mots de passe doivent correspondre!";
-              }  
-              })
-            }
-            className="form-control w-11/12 h-full 
-            px-3 py-3 font-sans text-sm font-normal transition-all 
-            border rounded-md peer text-blue-gray-700 outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 border-t-transparent focus:border-t-transparent border-blue-gray-200 focus:border-gray-900"
-            placeholder=" " />
-            <button type='button' onClick={()=> setShowPwd(!showPwd)}>
-                  <i className={`fa icon ml-2 ${!showPwd ? "fa-eye": "fa-eye-slash"} `} ></i>
-            </button>
-            {errors.cpassword && errors.cpassword.type === "required" && (
-                <p className="text-xs  text-red-500">{errors.cpassword.message}</p>
-            )}
-            {errors.cpassword && errors.cpassword.type === "validate" && (
-                <p className="text-xs  text-red-500">{errors.cpassword.message}</p>
-            )}
-            <label
-            className="flex w-11/12 h-full select-none pointer-events-none absolute left-0 font-normal !overflow-visible truncate peer-placeholder-shown:text-blue-gray-500 leading-tight peer-focus:leading-tight peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px] before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[4.1] text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 after:border-blue-gray-200 peer-focus:after:!border-gray-900">
-            confirmation password
-            </label>
-        </div>
-        </div>
+      )}
 
+      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <RHFInput
+          label="Adresse email"
+          type="text"
+          registration={register("email", {
+            required: "Email obligatoire",
+            pattern: { value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/, message: "Email invalide" },
+          })}
+          error={errors.email?.message}
+        />
+        <RHFInput
+          label="Nom d'utilisateur"
+          type="text"
+          registration={register("name", {
+            required: "Le nom est obligatoire",
+            maxLength: { value: 15, message: "15 caractères maximum" },
+          })}
+          error={errors.name?.message}
+        />
+        <RHFInput
+          label="Mot de passe"
+          showToggle showPwd={showPwd} onToggle={() => setShowPwd(v => !v)}
+          registration={register("password", {
+            required: "Mot de passe obligatoire",
+            minLength: { value: 6, message: "6 caractères minimum" },
+            maxLength: { value: 15, message: "15 caractères maximum" },
+          })}
+          error={errors.password?.message}
+        />
+        <RHFInput
+          label="Confirmer le mot de passe"
+          showToggle showPwd={showPwd} onToggle={() => setShowPwd(v => !v)}
+          registration={register("cpassword", {
+            required: "Confirmation obligatoire",
+            validate: (v) => v === getValues("password") || "Les mots de passe ne correspondent pas",
+          })}
+          error={errors.cpassword?.message}
+        />
 
-       
-        <div className="form-control pt-6 flex flex-row justify-between">
-            <button 
-                type="submit"  
-                className="bg-gray-800, mb-3 border border-green-700
-                inline-block w-100 rounded px-6 pb-2 pt-2.5 
-                text-xs font-medium  leading-normal 
-                shadow-[0_4px_9px_-4px_rgba(0,0,0,0.2)] 
-                transition duration-150 ease-in-out 
-                hover:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] 
-                focus:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)] 
-                focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(0,0,0,0.1),0_4px_18px_0_rgba(0,0,0,0.2)]"
-                data-te-ripple-init data-te-ripple-color="light"
-            >
-          
-            Register
+        <button type="submit" style={{
+          width: "100%", padding: "0.875rem",
+          borderRadius: p.radius, border: "none",
+          background: `linear-gradient(135deg, ${p.primary}, ${p.amber})`,
+          color: "#fff", fontSize: "0.95rem", fontWeight: 700,
+          cursor: "pointer", fontFamily: p.font,
+          boxShadow: `0 6px 20px ${p.primary}45`,
+          transition: "transform 0.2s ease, box-shadow 0.2s ease",
+          marginTop: "0.25rem",
+        }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 10px 28px ${p.primary}55`; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = `0 6px 20px ${p.primary}45`; }}
+        >
+          {status === "loading" ? "Création..." : "Créer mon compte"}
         </button>
-        <Link to="/security/login" className="font-semibold mt-3 text-indigo-600 hover:text-indigo-500">Retour au login</Link>
-        {/* <a href="#!" onClick={backToLogin} className="font-semibold mt-2 text-indigo-600 hover:text-indigo-500">
-              Retour au login
-        </a> */}
-        </div>
+
+        <p style={{ textAlign: "center", fontSize: "0.82rem", color: p.muted, margin: 0 }}>
+          Déjà un compte ?{" "}
+          <Link to="/security/login" style={{ color: p.primary, fontWeight: 700, textDecoration: "none" }}>
+            Se connecter →
+          </Link>
+        </p>
       </form>
     </div>
-  )
+  );
 }
 
-export default RegisterForm
+export default RegisterForm;
